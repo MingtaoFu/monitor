@@ -15,7 +15,6 @@
     <!-- endbuild -->
 </head>
 <body ng-app="monitorApp" ng-controller="rootCtrl">
-{{a}}
 <!--[if lte IE 8]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
@@ -25,12 +24,12 @@
 
 <div class="container" id="main">
     <div class="jumbotron">
-        <img src="" width="320" height="240">
+        <img ng-src="{{data.picture}}" width="320" height="240">
     </div>
 
     <div class="row marketing">
         <p>状态：<span style="color: red">{{suggestion}}</span></p>
-        <button class="btn btn-primary fRight" ng-disabled="!deB">连接</button>
+        <button class="btn btn-primary fRight" ng-disabled="!deB" ng-click="get.setting()">连接</button>
         <div class="dropup fRight">
             <button class="btn btn-default dropdown-toggle" type="button" id="deviceNum" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB">
                 设备号
@@ -46,29 +45,31 @@
         <button class="btn btn-primary fRight" ng-click="get.deviceList()">获取设备</button>
 
         <p>
-            <button type="button" class="btn btn-success" ng-disabled="!deB&&!linkB">开始</button>
+            <button type="button" class="btn btn-{{timer.$$state.status==0?'warning':'success'}}" ng-disabled="!deB||!linkB"
+                    ng-click="timer.$$state.status==0?stop():get.picture()">{{timer.$$state.status==0?'停止':'开始'}}</button>
         </p>
 
 
 
+
         <div class="dropup">
-            <button class="btn btn-default dropdown-toggle" type="button" id="xrandr" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB&&!linkB">
+            <button class="btn btn-default dropdown-toggle" type="button" id="xrandr" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB||!linkB">
                 分辨率
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="xrandr">
-                <li><a href="javascript:void(0)" ng-click="set('xrandx','176x144')">176x144</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('xrandx','320x240')">320x240</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('xrandx','352x288')">352x288</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('xrandx','640x480')">640x480</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('xrandx','800x600')">800x600</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('xrandx','1024x768')">1024x768</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('xrandr','176x144')">176x144</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('xrandr','320x240')">320x240</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('xrandr','352x288')">352x288</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('xrandr','640x480')">640x480</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('xrandr','800x600')">800x600</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('xrandr','1024x768')">1024x768</a></li>
             </ul>
             {{data.settings.xrandr}}
         </div>
 
         <div class="dropup">
-            <button class="btn btn-default dropdown-toggle" type="button" id="white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB&&!linkB">
+            <button class="btn btn-default dropdown-toggle" type="button" id="white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB||!linkB">
                 白平衡
                 <span class="caret"></span>
             </button>
@@ -83,26 +84,26 @@
         </div>
 
         <div class="dropup">
-            <button class="btn btn-default dropdown-toggle" type="button" id="effects" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB&&!linkB">
+            <button class="btn btn-default dropdown-toggle" type="button" id="effects" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB||!linkB">
                 特殊
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="effects">
-                <li><a href="javascript:void(0)" ng-click="set('effects','normal')">正常</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('effects','blackwhite')">黑白</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('effects','blue')">偏蓝</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('effects','green')">偏绿</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('effects','red')">偏红</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('effects','antique')">复古</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('effects','negative')">反色</a></li>
-                <li><a href="javascript:void(0)" ng-click="set('effects','bwnegative')">黑白反色</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('effect','normal')">正常</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('effect','blackwhite')">黑白</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('effect','blue')">偏蓝</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('effect','green')">偏绿</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('effect','red')">偏红</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('effect','antique')">复古</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('effect','negative')">反色</a></li>
+                <li><a href="javascript:void(0)" ng-click="set('effect','bwnegative')">黑白反色</a></li>
             </ul>
             {{data.effectsMapping[data.settings.effects]}}
         </div>
 
         <div class="dropup">
             <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="explosure" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB&&!linkB">
+                <button class="btn btn-default dropdown-toggle" type="button" id="explosure" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB||!linkB">
                     曝光
                     <span class="caret"></span>
                 </button>
@@ -119,7 +120,7 @@
 
         <div class="dropup">
             <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="lightness" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB&&!linkB">
+                <button class="btn btn-default dropdown-toggle" type="button" id="lightness" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB||!linkB">
                     亮度
                     <span class="caret"></span>
                 </button>
@@ -136,7 +137,7 @@
 
         <div class="dropup">
             <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="contrast" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB&&!linkB">
+                <button class="btn btn-default dropdown-toggle" type="button" id="contrast" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB||!linkB">
                     对比度
                     <span class="caret"></span>
                 </button>
@@ -153,7 +154,7 @@
 
         <div class="dropup">
             <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="saturation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB&&!linkB">
+                <button class="btn btn-default dropdown-toggle" type="button" id="saturation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB||!linkB">
                     饱和度
                     <span class="caret"></span>
                 </button>
@@ -171,17 +172,27 @@
         <div id="LED">
             <p>
                 <span>LED</span>
-                <button type="button" class="btn btn-{{data.settings.LEDSwitch?'success':'danger'}}" ng-disabled="!deB&&!linkB">{{data.settings.LEDSwitch?'开启中':'关闭中'}}</button>
+                <button type="button" class="btn btn-{{data.LEDSwitch?'success':'danger'}}" ng-disabled="!deB||!linkB"
+                        ng-click="data.LEDSwitch?setLED.main(0):setLED.main(1)">{{data.LEDSwitch?'开启中':'关闭中'}}</button>
             </p>
+            {{data.LEDArr[0]}}
             <div class="btn-group" role="group" aria-label="...">
-                <button type="button" class="btn btn-{{data.LEDArr[0].status?'warning':'default'}}" ng-disabled="!data.settings.LEDSwitch&&!deB&&!linkB">0</button>
-                <button type="button" class="btn btn-{{data.LEDArr[1].status?'warning':'default'}}" ng-disabled="!data.settings.LEDSwitch&&!deB&&!linkB">1</button>
-                <button type="button" class="btn btn-{{data.LEDArr[2].status?'warning':'default'}}" ng-disabled="!data.settings.LEDSwitch&&!deB&&!linkB">2</button>
-                <button type="button" class="btn btn-{{data.LEDArr[3].status?'warning':'default'}}" ng-disabled="!data.settings.LEDSwitch&&!deB&&!linkB">3</button>
-                <button type="button" class="btn btn-{{data.LEDArr[4].status?'warning':'default'}}" ng-disabled="!data.settings.LEDSwitch&&!deB&&!linkB">4</button>
-                <button type="button" class="btn btn-{{data.LEDArr[5].status?'warning':'default'}}" ng-disabled="!data.settings.LEDSwitch&&!deB&&!linkB">5</button>
-                <button type="button" class="btn btn-{{data.LEDarr[6].status?'warning':'default'}}" ng-disabled="!data.settings.LEDSwitch&&!deB&&!linkB">6</button>
-                <button type="button" class="btn btn-{{data.LEDarr[7].status?'warning':'default'}}" ng-disabled="!data.settings.LEDSwitch&&!deB&&!linkB">7</button>
+                <button type="button" class="btn btn-{{data.LEDArr[0].status?'warning':'default'}}"
+                        ng-disabled="!data.LEDSwitch||!deB||!linkB" ng-click="data.LEDArr[0].status?setLED.single(0,0):setLED.single(0,1)">0</button>
+                <button type="button" class="btn btn-{{data.LEDArr[1].status?'warning':'default'}}"
+                        ng-disabled="!data.LEDSwitch||!deB||!linkB" ng-click="data.LEDArr[1].status?setLED.single(1,0):setLED.single(1,1)">1</button>
+                <button type="button" class="btn btn-{{data.LEDArr[2].status?'warning':'default'}}"
+                        ng-disabled="!data.LEDSwitch||!deB||!linkB" ng-click="data.LEDArr[2].status?setLED.single(2,0):setLED.single(2,1)">2</button>
+                <button type="button" class="btn btn-{{data.LEDArr[3].status?'warning':'default'}}"
+                        ng-disabled="!data.LEDSwitch||!deB||!linkB" ng-click="data.LEDArr[3].status?setLED.single(3,0):setLED.single(3,1)">3</button>
+                <button type="button" class="btn btn-{{data.LEDArr[4].status?'warning':'default'}}"
+                        ng-disabled="!data.LEDSwitch||!deB||!linkB" ng-click="data.LEDArr[4].status:?setLED.single(4,0):setLED.single(4,1)">4</button>
+                <button type="button" class="btn btn-{{data.LEDArr[5].status?'warning':'default'}}"
+                        ng-disabled="!data.LEDSwitch||!deB||!linkB" ng-click="data.LEDArr[5].status?setLED.single(5,0):setLED.single(5,1)">5</button>
+                <button type="button" class="btn btn-{{data.LEDArr[6].status?'warning':'default'}}"
+                        ng-disabled="!data.LEDSwitch||!deB||!linkB" ng-click="data.LEDArr[6].status?setLED.single(6,0):setLED.single(6,1)">6</button>
+                <button type="button" class="btn btn-{{data.LEDArr[7].status?'warning':'default'}}"
+                        ng-disabled="!data.LEDSwitch||!deB||!linkB" ng-click="data.LEDArr[7].status?setLED.single(7,0):setLED.single(7,1)">7</button>
             </div>
         </div>
     </div>
@@ -212,6 +223,8 @@
 <!-- bower:js -->
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/lodash/lodash.min.js"></script>
+<script src="bower_components/restangular/dist/restangular.min.js"></script>
 <script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js"></script>
 <script src="bower_components/angular-animate/angular-animate.js"></script>
 <script src="bower_components/angular-cookies/angular-cookies.js"></script>
@@ -219,8 +232,6 @@
 <script src="bower_components/angular-route/angular-route.js"></script>
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script src="bower_components/angular-touch/angular-touch.js"></script>
-<script src="bower_components/lodash/lodash.min.js"></script>
-<script src="bower_components/restangular/dist/restangular.min.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 

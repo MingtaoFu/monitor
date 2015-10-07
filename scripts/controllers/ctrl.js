@@ -5,13 +5,13 @@
 
 //验证返回是否成功
 function val(data) {
-    return data.returnStatus == 'S';
+    return data.returnState == 'S';
 }
 
 //src头
 var srcHeader = 'data:image/jpeg;base64,';
 
-app.controller('rootCtrl', ['$scope', 'service', '$rootScope', function($scope, service, $rootScope) {
+app.controller('rootCtrl', ['$scope', 'service', '$rootScope', '$interval', function($scope, service, $rootScope, $interval) {
     $scope.deB = 0;
     $scope.linkB = 0;
     $scope.suggestion = '';
@@ -37,6 +37,7 @@ app.controller('rootCtrl', ['$scope', 'service', '$rootScope', function($scope, 
     $rootScope.data = {
         deviceList: [1],
         device: 1,
+        LEDSwitch: 0,
         settings: {
             xrandr: '320x240',
             white: 'auto',
@@ -44,8 +45,7 @@ app.controller('rootCtrl', ['$scope', 'service', '$rootScope', function($scope, 
             explosure: 2,
             lightness: 2,
             contrast: 2,
-            saturation: 2,
-            LEDSwitch: 0
+            saturation: 2
         },
         effectsMapping: {
             normal: '正常',
@@ -59,17 +59,20 @@ app.controller('rootCtrl', ['$scope', 'service', '$rootScope', function($scope, 
         },
         picture: '',
         LEDArr: [
-            {"id": 0, "status:": 0},
-            {"id": 1, "status:": 0},
-            {"id": 2, "status:": 0},
-            {"id": 3, "status:": 0},
-            {"id": 4, "status:": 0},
-            {"id": 5, "status:": 0},
-            {"id": 6, "status:": 0},
-            {"id": 7, "status:": 0}
+            {"id": 0, "status": 0},
+            {"id": 1, "status": 0},
+            {"id": 2, "status": 0},
+            {"id": 3, "status": 0},
+            {"id": 4, "status": 0},
+            {"id": 5, "status": 0},
+            {"id": 6, "status": 0},
+            {"id": 7, "status": 0}
         ]
     };
 
+    $rootScope.stop = function() {
+        $interval.cancel($rootScope.timer);
+    };
     $rootScope.get = {
         deviceList: function() {
             req(
@@ -83,13 +86,17 @@ app.controller('rootCtrl', ['$scope', 'service', '$rootScope', function($scope, 
         },
 
         picture: function() {
-            service.req.get('camera/picture', {ID: $rootScope.data.device}).then(function(data) {
-                if(val(data)) {
-                    $rootScope.data.picture = srcHeader + data.picture;
-                } else {
-                    //报错
-                }
-            });
+            $rootScope.timer = $interval(function() {
+                service.req.get('camera/picture', {ID: $rootScope.data.device}).then(function(data) {
+                    if(val(data)) {
+                        $rootScope.data.picture = srcHeader + data.picture;
+                        console.log($rootScope.timer)
+                    } else {
+                        //报错
+                    }
+                });
+            }, 1000);
+
         },
 
         setting: function() {
@@ -103,10 +110,24 @@ app.controller('rootCtrl', ['$scope', 'service', '$rootScope', function($scope, 
                     ID: $rootScope.data.device
                 }
             );
-        },
-
-        LED: function() {
-
+            req(
+                'led/mainstatus',
+                function(data) {
+                    $rootScope.data.LEDSwitch = data.Status;
+                },
+                {
+                    ID: $rootScope.data.device
+                }
+            );
+            req(
+                'led/status',
+                function(data) {
+                    $rootScope.data.LEDArr = data.LEDStatus;
+                },
+                {
+                    ID: $rootScope.data.device
+                }
+            );
         }
     };
 
@@ -124,5 +145,31 @@ app.controller('rootCtrl', ['$scope', 'service', '$rootScope', function($scope, 
     };
 
     /*----------LED模块-----------*/
-
+    $rootScope.setLED = {
+        main: function(bool) {
+            req(
+                'led/mainswitch',
+                function(data) {
+                    $rootScope.data.LEDSwitch = bool;
+                },
+                {
+                    ID: $rootScope.data.device,
+                    Switch: bool
+                }
+            );
+        },
+        single: function(num, bool) {
+            req(
+                'led/singleswitch',
+                function(data) {
+                    $rootScope.data.LEDArr[num] = bool;
+                },
+                {
+                    ID: $rootScope.data.device,
+                    LED_ID: num + 1,
+                    Switch: bool
+                }
+            );
+        }
+    };
 }]);
