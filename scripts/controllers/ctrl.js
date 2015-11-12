@@ -95,6 +95,7 @@ app.controller('rootCtrl', ['$scope', 'service', '$rootScope', '$interval', func
                         //报错
                     }
                 });
+                $rootScope.get.setting();
             }, 1000);
 
         },
