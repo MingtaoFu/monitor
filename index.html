@@ -29,7 +29,8 @@
 
     <div class="row marketing">
         <p>状态：<span style="color: red">{{suggestion}}</span></p>
-        <button class="btn btn-primary fRight" ng-disabled="!deB" ng-click="get.setting()">连接</button>
+        <button class="btn btn-primary fRight" ng-disabled="!deB" \
+                ng-click="!linkB?get.setting():stopLink()">{{!linkB?"连接":"断开"}}</button>
         <div class="dropup fRight">
             <button class="btn btn-default dropdown-toggle" type="button" id="deviceNum" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="!deB">
                 设备号

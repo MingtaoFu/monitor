@@ -70,6 +70,14 @@ app.controller('rootCtrl', ['$scope', 'service', '$rootScope', '$interval', func
         ]
     };
 
+    $rootScope.stopLink = function() {
+        $interval.cancel($rootScope.timer2);
+        $scope.linkB = 0;
+        try{
+            $rootScope.stop();
+        }
+    };
+
     $rootScope.stop = function() {
         $interval.cancel($rootScope.timer);
     };
@@ -95,40 +103,41 @@ app.controller('rootCtrl', ['$scope', 'service', '$rootScope', '$interval', func
                         //报错
                     }
                 });
-                $rootScope.get.setting();
             }, 1000);
 
         },
 
         setting: function() {
-            req(
-                'device/setting',
-                function(data) {
-                    $rootScope.data.settings = data.devSetting;
-                    $scope.linkB = 1;
-                },
-                {
-                    ID: $rootScope.data.device
-                }
-            );
-            req(
-                'led/mainstatus',
-                function(data) {
-                    $rootScope.data.LEDSwitch = data.Status;
-                },
-                {
-                    ID: $rootScope.data.device
-                }
-            );
-            req(
-                'led/status',
-                function(data) {
-                    $rootScope.data.LEDArr = data.LEDStatus;
-                },
-                {
-                    ID: $rootScope.data.device
-                }
-            );
+            $rootScope.timer2 = $interval(function() {
+                req(
+                    'device/setting',
+                    function(data) {
+                        $rootScope.data.settings = data.devSetting;
+                        $scope.linkB = 1;
+                    },
+                    {
+                        ID: $rootScope.data.device
+                    }
+                );
+                req(
+                    'led/mainstatus',
+                    function(data) {
+                        $rootScope.data.LEDSwitch = data.Status;
+                    },
+                    {
+                        ID: $rootScope.data.device
+                    }
+                );
+                req(
+                    'led/status',
+                    function(data) {
+                        $rootScope.data.LEDArr = data.LEDStatus;
+                    },
+                    {
+                        ID: $rootScope.data.device
+                    }
+                );
+            }, 1000);
         }
     };
 
