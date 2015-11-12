@@ -20,6 +20,6 @@ var app = angular.module('monitorApp', [
 
 app.service('service', ['Restangular', function(Restangular) {
     var factory = {};
-    factory.req = Restangular.allUrl('monitors', 'http://25.0.0.150:8080/');
+    factory.req = Restangular.allUrl('monitors', 'http://25.0.0.144:8080/');
     return factory;
 }]);

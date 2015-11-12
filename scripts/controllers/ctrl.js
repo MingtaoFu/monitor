@@ -75,6 +75,8 @@ app.controller('rootCtrl', ['$scope', 'service', '$rootScope', '$interval', func
         $scope.linkB = 0;
         try{
             $rootScope.stop();
+        } catch(e) {
+
         }
     };
 
